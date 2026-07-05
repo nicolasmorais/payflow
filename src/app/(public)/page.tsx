@@ -265,7 +265,7 @@ export default function CheckoutPage() {
               <div className="field">
                 <label><span className="icon">🙂</span> Nome completo</label>
                 <p className="hint">Digite seu nome, igual está no seu documento.</p>
-                <input ref={nomeRef} type="text" id="nome" placeholder="Exemplo: Maria da Silva" autoComplete="name" onInput={() => clearError("nome")} />
+                <input ref={nomeRef} type="text" id="nome" placeholder="Nome completo" autoComplete="name" onInput={() => clearError("nome")} />
                 <div className="error-msg" id="erro-nome">⚠️ Por favor, digite seu nome completo.</div>
               </div>
 
@@ -299,14 +299,14 @@ export default function CheckoutPage() {
 
               <div className="field">
                 <label><span className="icon">🛣️</span> Rua / Avenida</label>
-                <input ref={ruaRef} type="text" id="rua" placeholder="Exemplo: Rua das Flores" onInput={() => clearError("rua")} />
+                <input ref={ruaRef} type="text" id="rua" placeholder="Rua / Avenida" onInput={() => clearError("rua")} />
                 <div className="error-msg" id="erro-rua">⚠️ Digite o nome da rua.</div>
               </div>
 
               <div className="row-2">
                 <div className="field small">
                   <label><span className="icon">🔢</span> Número</label>
-                  <input ref={numRef} type="text" id="numero" placeholder="Exemplo: 123" inputMode="numeric" onInput={() => clearError("numero")} />
+                  <input ref={numRef} type="text" id="numero" placeholder="Número" inputMode="numeric" onInput={() => clearError("numero")} />
                   <div className="error-msg" id="erro-numero">⚠️ Digite o número.</div>
                 </div>
                 <div className="field">
@@ -317,19 +317,19 @@ export default function CheckoutPage() {
 
               <div className="field">
                 <label><span className="icon">📍</span> Bairro</label>
-                <input ref={bairroRef} type="text" id="bairro" placeholder="Exemplo: Centro" onInput={() => clearError("bairro")} />
+                <input ref={bairroRef} type="text" id="bairro" placeholder="Bairro" onInput={() => clearError("bairro")} />
                 <div className="error-msg" id="erro-bairro">⚠️ Digite o bairro.</div>
               </div>
 
               <div className="row-2">
                 <div className="field">
                   <label><span className="icon">🏙️</span> Cidade</label>
-                  <input ref={cidadeRef} type="text" id="cidade" placeholder="Exemplo: Goiânia" onInput={() => clearError("cidade")} />
+                  <input ref={cidadeRef} type="text" id="cidade" placeholder="Cidade" onInput={() => clearError("cidade")} />
                   <div className="error-msg" id="erro-cidade">⚠️ Digite a cidade.</div>
                 </div>
                 <div className="field small">
                   <label><span className="icon">🗺️</span> Estado</label>
-                  <input ref={estadoRef} type="text" id="estado" placeholder="Exemplo: GO" maxLength={2}
+                  <input ref={estadoRef} type="text" id="estado" placeholder="UF" maxLength={2}
                     onInput={(e) => { (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase(); clearError("estado"); }} />
                   <div className="error-msg" id="erro-estado">⚠️ Digite o estado (sigla).</div>
                 </div>
