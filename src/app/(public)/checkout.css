@@ -368,6 +368,11 @@
   margin: 16px 0 12px;
   line-height:1.5;
 }
+.checkout-page .pre-submit-note .whatsapp-icon{
+  color:#25D366;
+  font-size:18px;
+  vertical-align:middle;
+}
 
 .checkout-page .btn-secondary{
   width:100%;

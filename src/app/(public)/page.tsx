@@ -342,7 +342,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <p className="pre-submit-note">📞 Após o pedido, entraremos em contato pelo WhatsApp para confirmar antes do envio.</p>
+            <p className="pre-submit-note"><span className="whatsapp-icon">💬</span> Depois do pedido, vamos te ligar ou mandar mensagem no <strong>WhatsApp</strong> para confirmar antes de enviar.</p>
 
             <button type="submit" className="btn-primary">Continuar</button>
             <div className="trust-row">🔒 Seus dados estão protegidos e seguros</div>
