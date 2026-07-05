@@ -230,13 +230,13 @@ export default function DashboardPage() {
 
   const pedidosPorDiaData = {
     labels: data.pedidosPorDia.map((item) => {
-      const d = new Date(item.data + "T00:00:00");
+      const d = new Date(item.date + "T00:00:00");
       return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
     }),
     datasets: [
       {
         label: "Pedidos",
-        data: data.pedidosPorDia.map((item) => item.total),
+        data: data.pedidosPorDia.map((item) => item.count),
         backgroundColor: "rgba(59, 130, 246, 0.7)",
         borderColor: "rgb(59, 130, 246)",
         borderWidth: 1,
