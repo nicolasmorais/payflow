@@ -274,18 +274,18 @@ export default function DashboardPage() {
   ];
 
   const sortedStatusData = [...data.pedidosPorStatus].sort((a, b) => {
-    return statusOrder.indexOf(a.statusKey) - statusOrder.indexOf(b.statusKey);
+    return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
   });
 
   const statusDoughnutData = {
     labels: sortedStatusData.map(
-      (item) => STATUS_LABELS[item.statusKey] || item.status
+      (item) => STATUS_LABELS[item.status] || item.status
     ),
     datasets: [
       {
-        data: sortedStatusData.map((item) => item.total),
+        data: sortedStatusData.map((item) => item.count),
         backgroundColor: sortedStatusData.map(
-          (item) => STATUS_COLORS[item.statusKey] || "#94a3b8"
+          (item) => STATUS_COLORS[item.status] || "#94a3b8"
         ),
         borderColor: "hsl(var(--card))",
         borderWidth: 2,
@@ -312,7 +312,7 @@ export default function DashboardPage() {
     datasets: [
       {
         label: "Pedidos",
-        data: top10Cidades.map((item) => item.total),
+        data: top10Cidades.map((item) => item.count),
         backgroundColor: "rgba(16, 185, 129, 0.7)",
         borderColor: "rgb(16, 185, 129)",
         borderWidth: 1,
@@ -353,7 +353,7 @@ export default function DashboardPage() {
     datasets: [
       {
         label: "Pedidos",
-        data: data.evolucaoMensal.map((item) => item.total),
+        data: data.evolucaoMensal.map((item) => item.count),
         borderColor: "rgb(34, 197, 94)",
         backgroundColor: "rgba(34, 197, 94, 0.1)",
         fill: true,
