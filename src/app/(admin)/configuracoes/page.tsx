@@ -15,6 +15,7 @@ type ConfigMap = Record<string, string>;
 const DEFAULT_CONFIG: ConfigMap = {
   empresa_nome: "",
   empresa_logo: "",
+  logo_checkout: "",
   favicon: "",
   dias_entrega: "",
   horarios_disponiveis: "",
@@ -56,6 +57,13 @@ const TAB_SECTIONS: {
         description: "URL da imagem do logo exibido no sistema",
         type: "text",
         placeholder: "https://exemplo.com/logo.png",
+      },
+      {
+        key: "logo_checkout",
+        label: "Logo do Checkout",
+        description: "URL da imagem exibida no topo da pagina de checkout",
+        type: "text",
+        placeholder: "https://exemplo.com/logo-checkout.png",
       },
       {
         key: "favicon",

@@ -8,6 +8,7 @@ import "./checkout.css";
 interface PublicConfig {
   empresa_nome: string;
   empresa_logo: string;
+  logo_checkout: string;
 }
 
 export default function CheckoutPage() {
@@ -18,7 +19,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState("#000000");
   const [cepStatus, setCepStatus] = useState(false);
-  const [config, setConfig] = useState<PublicConfig>({ empresa_nome: "", empresa_logo: "" });
+  const [config, setConfig] = useState<PublicConfig>({ empresa_nome: "", empresa_logo: "", logo_checkout: "" });
 
 
   // Review data
@@ -50,6 +51,7 @@ export default function CheckoutPage() {
           setConfig({
             empresa_nome: json.data.empresa_nome || "",
             empresa_logo: json.data.empresa_logo || "",
+            logo_checkout: json.data.logo_checkout || "",
           });
         }
       })
@@ -360,8 +362,8 @@ export default function CheckoutPage() {
       {screen === "review" && (
         <div className="screen">
           <div className="centered-logo">
-            {config.empresa_logo ? (
-              <img src={config.empresa_logo} alt={config.empresa_nome} />
+            {config.logo_checkout ? (
+              <img src={config.logo_checkout} alt="Logo" />
             ) : (
               <div className="default-logo">E</div>
             )}

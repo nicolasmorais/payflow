@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 const PUBLIC_KEYS = [
   "empresa_nome",
   "empresa_logo",
+  "logo_checkout",
   "dias_entrega",
   "horarios_disponiveis",
   "prazo_minimo_agendamento",
