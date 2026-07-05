@@ -253,17 +253,6 @@ export default function CheckoutPage() {
 
   return (
     <div className="checkout-page">
-      <header className="site-header">
-        <div className="site-header-inner">
-          <div className="brand">
-            {config.empresa_logo ? (
-              <img src={config.empresa_logo} alt={config.empresa_nome} className="brand-logo-img" />
-            ) : (
-              <div className="brand-logo">E</div>
-            )}
-          </div>
-        </div>
-      </header>
 
       {/* ── Checkout Screen ── */}
       {screen === "checkout" && (
@@ -370,6 +359,14 @@ export default function CheckoutPage() {
       {/* ── Review Screen ── */}
       {screen === "review" && (
         <div className="screen">
+          <div className="centered-logo">
+            {config.empresa_logo ? (
+              <img src={config.empresa_logo} alt={config.empresa_nome} />
+            ) : (
+              <div className="default-logo">E</div>
+            )}
+          </div>
+
           {showReview && (
             <div>
               <h1>Confira antes de finalizar</h1>

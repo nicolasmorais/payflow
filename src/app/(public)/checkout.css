@@ -74,6 +74,29 @@
   max-width:120px;
   object-fit:contain;
 }
+
+.checkout-page .centered-logo{
+  text-align:center;
+  margin-bottom:24px;
+}
+.checkout-page .centered-logo img{
+  height:128px;
+  width:auto;
+  max-width:128px;
+  object-fit:contain;
+}
+.checkout-page .centered-logo .default-logo{
+  width:128px;
+  height:128px;
+  border-radius:3px;
+  background: var(--green);
+  color:#fff;
+  font-size:64px;
+  font-weight:800;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
 .checkout-page .brand-name{
   font-size:17px;
   font-weight:800;
