@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState("#000000");
   const [cepStatus, setCepStatus] = useState(false);
-  const [stepStatus, setStepStatus] = useState<"1active" | "2active" | "done">("1active");
+
 
   // Review data
   const [resumo, setResumo] = useState({
@@ -155,7 +155,6 @@ export default function CheckoutPage() {
     setScreen("review");
     setShowReview(true);
     setShowSuccess(false);
-    setStepStatus("2active");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -199,7 +198,6 @@ export default function CheckoutPage() {
       setOrderNumber(`#${String(result.numero || Math.floor(100000 + Math.random() * 900000)).padStart(6, "0")}`);
       setShowReview(false);
       setShowSuccess(true);
-      setStepStatus("done");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       alert(err instanceof Error ? err.message : "Erro ao enviar pedido. Tente novamente.");
@@ -210,7 +208,6 @@ export default function CheckoutPage() {
 
   function voltarParaEditar() {
     setScreen("checkout");
-    setStepStatus("1active");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -227,55 +224,7 @@ export default function CheckoutPage() {
     estadoRef.current && (estadoRef.current.value = "");
     setCepStatus(false);
     setScreen("checkout");
-    setStepStatus("1active");
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  // ── Step Indicator ──
-  function StepIndicator({ status }: { status: string }) {
-    if (status === "done") {
-      return (
-        <div className="step-indicator">
-          <div className="step-item completed">
-            <div className="step-circle">✓</div>
-            <div className="step-text">Seus dados</div>
-          </div>
-          <div className="step-connector filled" />
-          <div className="step-item completed">
-            <div className="step-circle">✓</div>
-            <div className="step-text">Confirmação</div>
-          </div>
-        </div>
-      );
-    }
-    if (status === "2active") {
-      return (
-        <div className="step-indicator">
-          <div className="step-item completed">
-            <div className="step-circle">✓</div>
-            <div className="step-text">Seus dados</div>
-          </div>
-          <div className="step-connector filled" />
-          <div className="step-item active">
-            <div className="step-circle">2</div>
-            <div className="step-text">Confirmação</div>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="step-indicator">
-        <div className="step-item active">
-          <div className="step-circle">1</div>
-          <div className="step-text">Seus dados</div>
-        </div>
-        <div className="step-connector" />
-        <div className="step-item">
-          <div className="step-circle">2</div>
-          <div className="step-text">Confirmação</div>
-        </div>
-      </div>
-    );
   }
 
   return (
@@ -296,8 +245,6 @@ export default function CheckoutPage() {
       {/* ── Checkout Screen ── */}
       {screen === "checkout" && (
         <div className="screen">
-          <StepIndicator status={stepStatus} />
-
           <div className="card order-card">
             <div className="order-thumb">🧴</div>
             <div className="order-info">
@@ -398,8 +345,6 @@ export default function CheckoutPage() {
       {/* ── Review Screen ── */}
       {screen === "review" && (
         <div className="screen">
-          <StepIndicator status={stepStatus} />
-
           {showReview && (
             <div>
               <h1>Confira antes de finalizar</h1>
