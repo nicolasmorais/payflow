@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Pedido {
+  id                String    @id @default(cuid())
+  numero            Int       @unique
+  nome              String
+  telefone          String
+  cpf               String?
+  cep               String
+  rua               String
+  numero_endereco   String
+  complemento       String?
+  bairro            String
+  cidade            String
+  estado            String
+  produto           String
+  quantidade        Int
+  valor             Float
+  data_entrega      DateTime
+  horario           String
+  observacoes       String?
+  status            String    @default("pendente")
+  utm_source        String?
+  utm_medium        String?
+  utm_campaign      String?
+  utm_content       String?
+  utm_term          String?
+  referer           String?
+  ip                String?
+  user_agent        String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  historico         HistoricoPedido[]
+
+  @@map("pedidos")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  email       String   @unique
+  password    String
+  role        String   @default("admin")
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Configuracao {
+  id          String   @id @default(cuid())
+  chave       String   @unique
+  valor       String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("configuracoes")
+}
+
+model Produto {
+  id              String    @id @default(cuid())
+  nome            String
+  imagem_url      String?
+  preco           Float
+  checkout_link   String?
+  checkout_id     String?
+  ativo           Boolean   @default(true)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@map("produtos")
+}
+
+model HistoricoPedido {
+  id          String   @id @default(cuid())
+  pedido_id   String
+  pedido      Pedido   @relation(fields: [pedido_id], references: [id])
+  usuario     String
+  alteracao   String
+  created_at  DateTime @default(now())
+
+  @@map("historico_pedidos")
+}
