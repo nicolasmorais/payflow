@@ -555,3 +555,16 @@
   color:#25445A;
   line-height:1.5;
 }
+
+.checkout-footer{
+  text-align:center;
+  padding:24px 18px;
+  border-top:1px solid var(--line);
+  margin-top:20px;
+}
+.checkout-footer p{
+  margin:0;
+  font-size:13px;
+  font-weight:600;
+  color: var(--ink-soft);
+}

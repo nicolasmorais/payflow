@@ -468,6 +468,10 @@ export default function CheckoutPage() {
           )}
         </div>
       )}
+
+      <footer className="checkout-footer">
+        <p>&copy; 2025 Elabela. Todos os direitos reservados.</p>
+      </footer>
     </div>
   );
 }
