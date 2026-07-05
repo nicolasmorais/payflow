@@ -68,6 +68,12 @@
   justify-content:center;
   flex:none;
 }
+.checkout-page .brand-logo-img{
+  height:40px;
+  width:auto;
+  max-width:120px;
+  object-fit:contain;
+}
 .checkout-page .brand-name{
   font-size:17px;
   font-weight:800;

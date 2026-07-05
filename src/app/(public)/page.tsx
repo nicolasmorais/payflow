@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { getUTMParams } from "@/lib/utils";
 import "./checkout.css";
 
+interface PublicConfig {
+  empresa_nome: string;
+  empresa_logo: string;
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [screen, setScreen] = useState<"checkout" | "review" | "success">("checkout");
@@ -13,6 +18,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState("#000000");
   const [cepStatus, setCepStatus] = useState(false);
+  const [config, setConfig] = useState<PublicConfig>({ empresa_nome: "", empresa_logo: "" });
 
 
   // Review data
@@ -36,6 +42,18 @@ export default function CheckoutPage() {
   useEffect(() => {
     const utms = getUTMParams();
     (window as any).__utms = utms;
+
+    fetch("/api/configuracoes/publicas")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data) {
+          setConfig({
+            empresa_nome: json.data.empresa_nome || "",
+            empresa_logo: json.data.empresa_logo || "",
+          });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // ── Masks ──
@@ -238,13 +256,12 @@ export default function CheckoutPage() {
       <header className="site-header">
         <div className="site-header-inner">
           <div className="brand">
-            <div className="brand-logo">E</div>
-            <div>
-              <div className="brand-name">Elabela</div>
-              <div className="brand-tag">Cuidados para sua pele</div>
-            </div>
+            {config.empresa_logo ? (
+              <img src={config.empresa_logo} alt={config.empresa_nome} className="brand-logo-img" />
+            ) : (
+              <div className="brand-logo">E</div>
+            )}
           </div>
-          <div className="secure-badge">🔒 Compra segura</div>
         </div>
       </header>
 
