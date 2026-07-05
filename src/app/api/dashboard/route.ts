@@ -94,8 +94,8 @@ export async function GET(request: NextRequest) {
       }
     }
     const pedidosPorDia = Object.entries(pedidosPorDiaMap)
-      .map(([data, total]) => ({ data, total }))
-      .sort((a, b) => a.data.localeCompare(b.data));
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
 
     // Pedidos por cidade (top 10)
     const pedidosPorCidadeRaw = await prisma.pedido.groupBy({
@@ -108,7 +108,7 @@ export async function GET(request: NextRequest) {
     });
     const pedidosPorCidade = pedidosPorCidadeRaw.map((item) => ({
       cidade: item.cidade,
-      total: item._count.id,
+      count: item._count.id,
     }));
 
     // Evolucao mensal (last 12 months)
@@ -144,8 +144,8 @@ export async function GET(request: NextRequest) {
       }
     }
     const evolucaoMensal = Object.entries(evolucaoMensalMap)
-      .map(([mes, data]) => ({ mes, ...data }))
-      .sort((a, b) => a.mes.localeCompare(b.mes));
+      .map(([month, data]) => ({ month, ...data }))
+      .sort((a, b) => a.month.localeCompare(b.month));
 
     // Format pedidos por status
     const statusLabels: Record<string, string> = {
@@ -158,9 +158,8 @@ export async function GET(request: NextRequest) {
     };
 
     const pedidosPorStatusData = pedidosPorStatus.map((item) => ({
-      status: statusLabels[item.status] || item.status,
-      statusKey: item.status,
-      total: item._count.id,
+      status: item.status,
+      count: item._count.id,
     }));
 
     return NextResponse.json({

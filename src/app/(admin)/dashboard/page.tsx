@@ -343,7 +343,7 @@ export default function DashboardPage() {
 
   const evolucaoMensalData = {
     labels: data.evolucaoMensal.map((item) => {
-      const [year, month] = item.mes.split("-");
+      const [year, month] = item.month.split("-");
       const date = new Date(parseInt(year), parseInt(month) - 1);
       return date.toLocaleDateString("pt-BR", {
         month: "short",
