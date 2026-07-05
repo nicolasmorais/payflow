@@ -78,12 +78,13 @@
 .checkout-page .centered-logo{
   text-align:center;
   margin-bottom:24px;
+  line-height:0;
 }
 .checkout-page .centered-logo img{
-  height:128px;
-  width:auto;
-  max-width:128px;
+  width:250px;
+  height:auto;
   object-fit:contain;
+  display:inline-block;
 }
 .checkout-page .centered-logo .default-logo{
   width:128px;
