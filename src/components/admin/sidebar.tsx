@@ -76,8 +76,6 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         </Link>
       </div>
 
-      <div className="mx-3 h-px bg-slate-200" />
-
       {/* Toggle */}
       <button
         onClick={onToggle}
