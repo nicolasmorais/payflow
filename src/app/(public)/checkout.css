@@ -360,6 +360,15 @@
 .checkout-page .btn-primary:active{ background: var(--green-dark); }
 .checkout-page .btn-primary:disabled{ opacity: 0.5; cursor: not-allowed; }
 
+.checkout-page .pre-submit-note{
+  font-size:14px;
+  font-weight:700;
+  color: var(--ink-soft);
+  text-align:center;
+  margin: 16px 0 12px;
+  line-height:1.5;
+}
+
 .checkout-page .btn-secondary{
   width:100%;
   background: transparent;
