@@ -73,7 +73,7 @@ export default function CheckoutPage() {
   }
 
   // ── CEP auto-fill ──
-  const cepTimer = useRef<ReturnType<typeof setTimeout>>();
+  const cepTimer = useRef<ReturnType<typeof setTimeout>>(null);
 
   async function buscarEndereco(cep: string) {
     try {
