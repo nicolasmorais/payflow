@@ -76,3 +76,23 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+
+.sidebar-logo {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.sidebar-logo-default {
+  width: 180px;
+  height: 60px;
+  background: #2E6B4F;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+}

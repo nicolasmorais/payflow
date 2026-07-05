@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -28,12 +28,25 @@ const navItems = [
   { href: "/configuracoes", label: "Configuracoes", icon: Settings },
 ];
 
-const LOGO_URL =
-  "https://pub-da9fd1c19b8e45d691d67626b9a7ba6d.r2.dev/1783253263032-95d786c5-293c-41f5-b2b8-e87d2be741ca-(1).png";
+const DEFAULT_LOGO = "E";
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [logoUrl, setLogoUrl] = useState("");
+  const [empresaNome, setEmpresaNome] = useState("");
+
+  useEffect(() => {
+    fetch("/api/configuracoes/publicas")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data) {
+          setLogoUrl(json.data.empresa_logo || "");
+          setEmpresaNome(json.data.empresa_nome || "");
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -49,16 +62,17 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
       style={{ backgroundColor: "#F5F5F5" }}
     >
       {/* Logo */}
-      <div className="flex w-full items-center justify-center">
-        <Link href="/dashboard" className="relative block h-20 w-20 overflow-hidden">
-          <Image
-            src={LOGO_URL}
-            alt="Logo"
-            fill
-            className="object-contain"
-            sizes="80px"
-            priority
-          />
+      <div className="flex w-full items-center justify-center py-4">
+        <Link href="/dashboard" className="block">
+          {logoUrl ? (
+            <img
+              src={logoUrl}
+              alt={empresaNome}
+              className="sidebar-logo"
+            />
+          ) : (
+            <div className="sidebar-logo-default">{DEFAULT_LOGO}</div>
+          )}
         </Link>
       </div>
 
