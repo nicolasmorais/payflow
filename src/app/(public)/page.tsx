@@ -259,6 +259,14 @@ export default function CheckoutPage() {
       {/* ── Checkout Screen ── */}
       {screen === "checkout" && (
         <div className="screen">
+          <div className="centered-logo">
+            {config.logo_checkout ? (
+              <img src={config.logo_checkout} alt="Logo" />
+            ) : (
+              <div className="default-logo">E</div>
+            )}
+          </div>
+
           <div className="card order-card">
             <div className="order-thumb">🧴</div>
             <div className="order-info">
