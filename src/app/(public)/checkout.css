@@ -313,6 +313,14 @@
   border-color: var(--error);
   background: var(--error-bg);
 }
+.checkout-page input.filled{
+  border-color: var(--green);
+  background: #F0FAF4;
+}
+.checkout-page input.attention{
+  border-color: #D4A017;
+  background: #FFFBE6;
+}
 
 .checkout-page .cep-status{
   font-size: 14px;

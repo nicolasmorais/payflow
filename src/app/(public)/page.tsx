@@ -80,10 +80,12 @@ export default function CheckoutPage() {
       const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const d = await r.json();
       if (d.erro) { showError("cep"); return; }
-      if (ruaRef.current) ruaRef.current.value = d.logradouro || "";
-      if (bairroRef.current) bairroRef.current.value = d.bairro || "";
-      if (cidadeRef.current) cidadeRef.current.value = d.localidade || "";
-      if (estadoRef.current) estadoRef.current.value = d.uf || "";
+      if (ruaRef.current) { ruaRef.current.value = d.logradouro || ""; ruaRef.current.classList.add("filled"); }
+      if (bairroRef.current) { bairroRef.current.value = d.bairro || ""; bairroRef.current.classList.add("filled"); }
+      if (cidadeRef.current) { cidadeRef.current.value = d.localidade || ""; cidadeRef.current.classList.add("filled"); }
+      if (estadoRef.current) { estadoRef.current.value = d.uf || ""; estadoRef.current.classList.add("filled"); }
+      if (numRef.current) { numRef.current.classList.add("attention"); }
+      if (compRef.current) { compRef.current.classList.add("attention"); }
       setCepStatus(true);
       clearError("cep");
       numRef.current?.focus();
@@ -95,6 +97,10 @@ export default function CheckoutPage() {
     if (cepRef.current) cepRef.current.value = formatted;
     clearError("cep");
     setCepStatus(false);
+
+    [ruaRef, bairroRef, cidadeRef, estadoRef, numRef, compRef].forEach(ref => {
+      if (ref.current) { ref.current.classList.remove("filled", "attention"); }
+    });
 
     const raw = formatted.replace(/\D/g, "");
     if (raw.length === 8) {
@@ -299,38 +305,38 @@ export default function CheckoutPage() {
 
               <div className="field">
                 <label><span className="icon">🛣️</span> Rua / Avenida</label>
-                <input ref={ruaRef} type="text" id="rua" placeholder="Rua / Avenida" onInput={() => clearError("rua")} />
+                <input ref={ruaRef} type="text" id="rua" placeholder="Rua / Avenida" onInput={(e) => { clearError("rua"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                 <div className="error-msg" id="erro-rua">⚠️ Digite o nome da rua.</div>
               </div>
 
               <div className="row-2">
                 <div className="field small">
                   <label><span className="icon">🔢</span> Número</label>
-                  <input ref={numRef} type="text" id="numero" placeholder="Número" inputMode="numeric" onInput={() => clearError("numero")} />
+                  <input ref={numRef} type="text" id="numero" placeholder="Número" inputMode="numeric" onInput={(e) => { clearError("numero"); (e.target as HTMLInputElement).classList.remove("attention"); (e.target as HTMLInputElement).classList.add("filled"); }} />
                   <div className="error-msg" id="erro-numero">⚠️ Digite o número.</div>
                 </div>
                 <div className="field">
                   <label><span className="icon">🏢</span> Complemento</label>
-                  <input ref={compRef} type="text" id="complemento" placeholder="Apto, casa, bloco (opcional)" />
+                  <input ref={compRef} type="text" id="complemento" placeholder="Apto, casa, bloco (opcional)" onInput={(e) => { (e.target as HTMLInputElement).classList.remove("attention"); (e.target as HTMLInputElement).classList.add("filled"); }} />
                 </div>
               </div>
 
               <div className="field">
                 <label><span className="icon">📍</span> Bairro</label>
-                <input ref={bairroRef} type="text" id="bairro" placeholder="Bairro" onInput={() => clearError("bairro")} />
+                <input ref={bairroRef} type="text" id="bairro" placeholder="Bairro" onInput={(e) => { clearError("bairro"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                 <div className="error-msg" id="erro-bairro">⚠️ Digite o bairro.</div>
               </div>
 
               <div className="row-2">
                 <div className="field">
                   <label><span className="icon">🏙️</span> Cidade</label>
-                  <input ref={cidadeRef} type="text" id="cidade" placeholder="Cidade" onInput={() => clearError("cidade")} />
+                  <input ref={cidadeRef} type="text" id="cidade" placeholder="Cidade" onInput={(e) => { clearError("cidade"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                   <div className="error-msg" id="erro-cidade">⚠️ Digite a cidade.</div>
                 </div>
                 <div className="field small">
                   <label><span className="icon">🗺️</span> Estado</label>
                   <input ref={estadoRef} type="text" id="estado" placeholder="UF" maxLength={2}
-                    onInput={(e) => { (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase(); clearError("estado"); }} />
+                    onInput={(e) => { (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase(); clearError("estado"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                   <div className="error-msg" id="erro-estado">⚠️ Digite o estado (sigla).</div>
                 </div>
               </div>
