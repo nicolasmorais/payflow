@@ -8,8 +8,6 @@ import {
   Package,
   Settings,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
   Activity,
   ShoppingBag,
   Menu,
@@ -107,10 +105,6 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileToggle }: Sid
             )}
           </Link>
         </div>
-
-        <button onClick={onToggle} className="sidebar-toggle">
-          {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-        </button>
 
         {/* Nav */}
         <nav className="sidebar-nav">
