@@ -45,11 +45,19 @@ document,'script','https://connect.facebook.net/en_US/fbevents.js');`
   );
   if (baseScript) document.head.appendChild(baseScript);
 
-  const initScript = createScript(
-    "meta-init",
-    `fbq('init', '${pixelId}');fbq('track', 'PageView');`
-  );
-  if (initScript) document.head.appendChild(initScript);
+  if (pageType !== "checkout") {
+    const initScript = createScript(
+      "meta-init",
+      `fbq('init', '${pixelId}');fbq('track', 'PageView');`
+    );
+    if (initScript) document.head.appendChild(initScript);
+  } else {
+    const initScript = createScript(
+      "meta-init",
+      `fbq('init', '${pixelId}');`
+    );
+    if (initScript) document.head.appendChild(initScript);
+  }
 
   if (pageType === "checkout") {
     const script = createScript(
@@ -78,7 +86,7 @@ document,'script','https://connect.facebook.net/en_US/fbevents.js');`
   document.body.appendChild(noscript);
 }
 
-function injectGoogleAnalytics(gaId: string) {
+function injectGoogleAnalytics(gaId: string, pageType: "checkout" | "confirmation" | "pageview") {
   const gtagScript = createScript(
     "ga-gtag",
     undefined,
@@ -86,12 +94,13 @@ function injectGoogleAnalytics(gaId: string) {
   );
   if (gtagScript) document.head.appendChild(gtagScript);
 
+  const sendPageView = pageType !== "checkout" ? "true" : "false";
   const configScript = createScript(
     "ga-config",
     `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', '${gaId}');`
+gtag('config', '${gaId}', { send_page_view: ${sendPageView} });`
   );
   if (configScript) document.head.appendChild(configScript);
 }
@@ -184,7 +193,7 @@ export function PixelScripts({ pageType = "pageview" }: PixelScriptsProps) {
           injectMetaPixel(config.pixel_meta, pageType);
         }
         if (config.pixel_google_analytics) {
-          injectGoogleAnalytics(config.pixel_google_analytics);
+          injectGoogleAnalytics(config.pixel_google_analytics, pageType);
         }
         if (config.pixel_google_ads) {
           injectGoogleAds(config.pixel_google_ads, pageType);
