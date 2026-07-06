@@ -19,12 +19,22 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/pedidos", label: "Pedidos", icon: Package },
-  { href: "/produtos", label: "Produtos", icon: ShoppingBag },
-  { href: "/status", label: "Sistema", icon: Activity },
-  { href: "/configuracoes", label: "Configuracoes", icon: Settings },
+const navGroups = [
+  {
+    label: "Visão Geral",
+    items: [
+      { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/pedidos", label: "Pedidos", icon: Package },
+      { href: "/produtos", label: "Produtos", icon: ShoppingBag },
+    ],
+  },
+  {
+    label: "Sistema",
+    items: [
+      { href: "/status", label: "Status", icon: Activity },
+      { href: "/configuracoes", label: "Configuracoes", icon: Settings },
+    ],
+  },
 ];
 
 const DEFAULT_LOGO = "E";
@@ -71,19 +81,26 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Nav */}
       <nav className="sidebar-nav">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`sidebar-nav-item ${isActive ? "active" : ""}`}
-            >
-              <item.icon />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
+        {navGroups.map((group) => (
+          <div key={group.label}>
+            {!collapsed && (
+              <span className="sidebar-section-label">{group.label}</span>
+            )}
+            {group.items.map((item) => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`sidebar-nav-item ${isActive ? "active" : ""}`}
+                >
+                  <item.icon />
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Footer */}
