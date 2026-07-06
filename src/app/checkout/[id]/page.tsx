@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { notFound } from "next/navigation";
 import CheckoutClient from "./checkout-client";
+import { PixelScripts } from "@/components/pixels/pixel-scripts";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -24,5 +25,10 @@ export default async function CheckoutProdutoPage({ params }: PageProps) {
     notFound();
   }
 
-  return <CheckoutClient produto={produto} />;
+  return (
+    <>
+      <PixelScripts />
+      <CheckoutClient produto={produto} />
+    </>
+  );
 }

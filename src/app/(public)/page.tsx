@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getUTMParams } from "@/lib/utils";
+import { PixelScripts } from "@/components/pixels/pixel-scripts";
 import "./checkout.css";
 
 interface PublicConfig {
@@ -255,6 +256,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="checkout-page">
+      <PixelScripts />
 
       {/* ── Checkout Screen ── */}
       {screen === "checkout" && (
