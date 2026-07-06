@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { getUTMParams } from "@/lib/utils";
+import { PixelScripts } from "@/components/pixels/pixel-scripts";
 import "../checkout.css";
 
 interface Produto {
@@ -225,6 +226,7 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
 
   return (
     <div className="checkout-page">
+      <PixelScripts pageType="checkout" />
 
       {screen === "checkout" && (
         <div className="screen">

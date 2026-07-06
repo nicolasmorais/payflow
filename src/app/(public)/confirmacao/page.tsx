@@ -182,7 +182,7 @@ export default function ConfirmacaoPage() {
         </p>
       </div>
 
-      <PixelScripts />
+      <PixelScripts pageType="confirmation" />
     </div>
   );
 }

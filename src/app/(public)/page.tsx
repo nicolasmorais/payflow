@@ -256,7 +256,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="checkout-page">
-      <PixelScripts />
+      <PixelScripts pageType="checkout" />
 
       {/* ── Checkout Screen ── */}
       {screen === "checkout" && (

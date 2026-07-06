@@ -9,6 +9,10 @@ interface PublicConfig {
   pixel_taboola?: string;
 }
 
+interface PixelScriptsProps {
+  pageType?: "checkout" | "confirmation";
+}
+
 function removePixelScripts() {
   const existing = document.querySelectorAll("[data-pixel-script]");
   existing.forEach((el) => el.remove());
@@ -18,20 +22,19 @@ function createScript(
   id: string,
   content?: string,
   src?: string,
-  async = true
+  isAsync = true
 ): HTMLScriptElement | null {
   if (!content && !src) return null;
   const script = document.createElement("script");
   script.setAttribute("data-pixel-script", id);
   script.type = "text/javascript";
-  if (async) script.async = true;
+  if (isAsync) script.async = true;
   if (content) script.textContent = content;
   if (src) script.src = src;
   return script;
 }
 
-function injectMetaPixel(pixelId: string, isConfirmation: boolean) {
-  // Load the Meta Pixel base script
+function injectMetaPixel(pixelId: string, pageType: "checkout" | "confirmation" | "pageview") {
   const baseScript = createScript(
     "meta-base",
     `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -42,22 +45,28 @@ document,'script','https://connect.facebook.net/en_US/fbevents.js');`
   );
   if (baseScript) document.head.appendChild(baseScript);
 
-  // Init and track
   const initScript = createScript(
     "meta-init",
     `fbq('init', '${pixelId}');fbq('track', 'PageView');`
   );
   if (initScript) document.head.appendChild(initScript);
 
-  if (isConfirmation) {
-    const purchaseScript = createScript(
+  if (pageType === "checkout") {
+    const script = createScript(
+      "meta-startcheckout",
+      `fbq('track', 'InitiateCheckout');`
+    );
+    if (script) document.head.appendChild(script);
+  }
+
+  if (pageType === "confirmation") {
+    const script = createScript(
       "meta-purchase",
       `fbq('track', 'Purchase', {value: 0, currency: 'BRL'});`
     );
-    if (purchaseScript) document.head.appendChild(purchaseScript);
+    if (script) document.head.appendChild(script);
   }
 
-  // noscript fallback img (appended to body)
   const noscript = document.createElement("noscript");
   noscript.setAttribute("data-pixel-script", "meta-noscript");
   const img = document.createElement("img");
@@ -87,7 +96,7 @@ gtag('config', '${gaId}');`
   if (configScript) document.head.appendChild(configScript);
 }
 
-function injectGoogleAds(awId: string) {
+function injectGoogleAds(awId: string, pageType: "checkout" | "confirmation" | "pageview") {
   const gtagScript = createScript(
     "gads-gtag",
     undefined,
@@ -103,9 +112,25 @@ gtag('js', new Date());
 gtag('config', '${awId}');`
   );
   if (configScript) document.head.appendChild(configScript);
+
+  if (pageType === "checkout") {
+    const script = createScript(
+      "gads-startcheckout",
+      `gtag('event', 'begin_checkout', { currency: 'BRL', value: 0 });`
+    );
+    if (script) document.head.appendChild(script);
+  }
+
+  if (pageType === "confirmation") {
+    const script = createScript(
+      "gads-purchase",
+      `gtag('event', 'purchase', { currency: 'BRL', value: 0 });`
+    );
+    if (script) document.head.appendChild(script);
+  }
 }
 
-function injectTaboola(advertiserId: string) {
+function injectTaboola(advertiserId: string, pageType: "checkout" | "confirmation" | "pageview") {
   const taboolaScript = createScript(
     "taboola-base",
     undefined,
@@ -116,19 +141,35 @@ function injectTaboola(advertiserId: string) {
     document.head.appendChild(taboolaScript);
   }
 
-  const trackScript = createScript(
-    "taboola-track",
-    `window._tfa = window._tfa || [];
-_tfa.push({notify: 'event', name: 'page_view', id: ${advertiserId}});`
-  );
-  if (trackScript) document.head.appendChild(trackScript);
+  if (pageType === "checkout") {
+    const script = createScript(
+      "taboola-startcheckout",
+      `window._tfa = window._tfa || [];
+_tfa.push({notify: 'event', name: 'start_checkout', id: '${advertiserId}'});`
+    );
+    if (script) document.head.appendChild(script);
+  }
+
+  if (pageType === "confirmation") {
+    const script = createScript(
+      "taboola-purchase",
+      `window._tfa = window._tfa || [];
+_tfa.push({notify: 'event', name: 'purchase', id: '${advertiserId}'});`
+    );
+    if (script) document.head.appendChild(script);
+  }
+
+  if (pageType === "pageview") {
+    const script = createScript(
+      "taboola-track",
+      `window._tfa = window._tfa || [];
+_tfa.push({notify: 'event', name: 'page_view', id: '${advertiserId}'});`
+    );
+    if (script) document.head.appendChild(script);
+  }
 }
 
-export function PixelScripts() {
-  const isConfirmation =
-    typeof window !== "undefined" &&
-    window.location.pathname === "/confirmacao";
-
+export function PixelScripts({ pageType = "pageview" }: PixelScriptsProps) {
   useEffect(() => {
     async function loadPixels() {
       try {
@@ -140,16 +181,16 @@ export function PixelScripts() {
         removePixelScripts();
 
         if (config.pixel_meta) {
-          injectMetaPixel(config.pixel_meta, isConfirmation);
+          injectMetaPixel(config.pixel_meta, pageType);
         }
         if (config.pixel_google_analytics) {
           injectGoogleAnalytics(config.pixel_google_analytics);
         }
         if (config.pixel_google_ads) {
-          injectGoogleAds(config.pixel_google_ads);
+          injectGoogleAds(config.pixel_google_ads, pageType);
         }
         if (config.pixel_taboola) {
-          injectTaboola(config.pixel_taboola);
+          injectTaboola(config.pixel_taboola, pageType);
         }
       } catch (err) {
         console.error("Erro ao carregar pixels:", err);
@@ -161,7 +202,7 @@ export function PixelScripts() {
     return () => {
       removePixelScripts();
     };
-  }, [isConfirmation]);
+  }, [pageType]);
 
   return null;
 }

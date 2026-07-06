@@ -27,7 +27,7 @@ export default async function CheckoutProdutoPage({ params }: PageProps) {
 
   return (
     <>
-      <PixelScripts />
+      <PixelScripts pageType="checkout" />
       <CheckoutClient produto={produto} />
     </>
   );
