@@ -167,7 +167,7 @@
 
 .sidebar-nav {
   flex: 1;
-  padding: 12px 10px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 16px;

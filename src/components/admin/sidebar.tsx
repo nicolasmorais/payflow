@@ -65,7 +65,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside className="sidebar" style={{ width: collapsed ? 72 : 220 }}>
       {/* Logo */}
-      <div style={{ padding: "20px 16px", textAlign: "center" }}>
+      <div style={{ padding: "16px 16px 8px", textAlign: "center" }}>
         <Link href="/dashboard" style={{ display: "inline-block" }}>
           {logoUrl ? (
             <img src={logoUrl} alt={empresaNome} className="sidebar-logo" />
