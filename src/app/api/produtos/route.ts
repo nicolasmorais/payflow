@@ -25,7 +25,16 @@ export async function GET(request: NextRequest) {
       orderBy: { created_at: "desc" },
     });
 
-    return NextResponse.json({ success: true, data: produtos });
+    // Normalizar checkout_links antigos que salvaram URL completa
+    const normalized = produtos.map((p) => {
+      if (p.checkout_link && p.checkout_link.includes("/checkout/")) {
+        const match = p.checkout_link.match(/\/checkout\/.+/);
+        if (match) return { ...p, checkout_link: match[0] };
+      }
+      return p;
+    });
+
+    return NextResponse.json({ success: true, data: normalized });
   } catch (error) {
     console.error("Erro ao listar produtos:", error);
     return NextResponse.json(
@@ -64,10 +73,8 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Gerar checkout_link automaticamente
-    const host = request.headers.get("host") || "localhost:3000";
-    const protocol = request.headers.get("x-forwarded-proto") || "http";
-    const checkoutLink = `${protocol}://${host}/checkout/${produto.id}`;
+    // Salvar apenas o caminho, URL completa e gerada no frontend
+    const checkoutLink = `/checkout/${produto.id}`;
 
     const produtoAtualizado = await prisma.produto.update({
       where: { id: produto.id },

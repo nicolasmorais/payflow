@@ -97,9 +97,15 @@ export default function ProdutosPage() {
   const [saving, setSaving] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  const getFullUrl = (path: string) => {
+    if (path.startsWith("http")) return path;
+    return `${window.location.origin}${path}`;
+  };
+
   const copyToClipboard = async (text: string, id: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      const fullUrl = getFullUrl(text);
+      await navigator.clipboard.writeText(fullUrl);
       setCopiedId(id);
       toast.success("Link copiado!");
       setTimeout(() => setCopiedId(null), 2000);
@@ -432,7 +438,7 @@ export default function ProdutosPage() {
                     {produto.checkout_link ? (
                       <div className="flex items-center gap-2">
                         <a
-                          href={produto.checkout_link}
+                          href={getFullUrl(produto.checkout_link!)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs text-blue-600 hover:text-blue-800 hover:underline truncate max-w-[180px]"
@@ -508,7 +514,7 @@ export default function ProdutosPage() {
                           <>
                             <DropdownMenuItem asChild>
                               <a
-                                href={produto.checkout_link}
+                                href={getFullUrl(produto.checkout_link!)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
