@@ -7,15 +7,19 @@ interface PublicConfig {
 }
 
 interface PixelScriptsProps {
-  pageType?: "checkout" | "confirmation";
+  pageType: "checkout" | "confirmation";
 }
 
-export function PixelScripts({ pageType = "confirmation" }: PixelScriptsProps) {
-  const loaded = useRef(false);
+export function PixelScripts({ pageType }: PixelScriptsProps) {
+  const fired = useRef(false);
 
   useEffect(() => {
-    if (loaded.current) return;
-    loaded.current = true;
+    fired.current = false;
+  }, [pageType]);
+
+  useEffect(() => {
+    if (fired.current) return;
+    fired.current = true;
 
     async function loadTaboola() {
       try {
@@ -28,9 +32,8 @@ export function PixelScripts({ pageType = "confirmation" }: PixelScriptsProps) {
 
         const advertiserId = config.pixel_taboola;
 
-        // Load Taboola base script
-        const existing = document.getElementById("tb_tfa_script");
-        if (!existing) {
+        // Load Taboola base script only once
+        if (!document.getElementById("tb_tfa_script")) {
           const script = document.createElement("script");
           script.id = "tb_tfa_script";
           script.src = `https://cdn.taboola.com/libtrc/${advertiserId}/tfa.js`;

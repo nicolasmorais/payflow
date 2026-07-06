@@ -463,22 +463,29 @@ export default function CheckoutPage() {
                   <div className="explain-item">
                     <div className="explain-num">1</div>
                     <div className="explain-text">
-                      <strong>Preparamos seu produto</strong>
-                      <span>Sua encomenda é embalada com cuidado.</span>
+                      <strong>Preparamos seu pedido</strong>
+                      <span>Seu pedido é separado e preparado com todo o cuidado.</span>
                     </div>
                   </div>
                   <div className="explain-item">
                     <div className="explain-num">2</div>
                     <div className="explain-text">
-                      <strong>Enviamos para sua casa</strong>
-                      <span>O entregador vai até o endereço informado.</span>
+                      <strong>Entregamos no endereço informado</strong>
+                      <span>Nossos entregadores realizam a entrega no endereço cadastrado.</span>
                     </div>
                   </div>
                   <div className="explain-item">
                     <div className="explain-num">3</div>
                     <div className="explain-text">
-                      <strong>Você paga na entrega</strong>
-                      <span>Pague em dinheiro ou cartão direto ao entregador.</span>
+                      <strong>Você recebe primeiro</strong>
+                      <span>Confira se está tudo certo com o seu pedido no momento da entrega.</span>
+                    </div>
+                  </div>
+                  <div className="explain-item">
+                    <div className="explain-num">4</div>
+                    <div className="explain-text">
+                      <strong>Pagamento após a entrega</strong>
+                      <span>Após a confirmação da entrega, entraremos em contato pelo WhatsApp para realizar a cobrança.</span>
                     </div>
                   </div>
                 </div>
