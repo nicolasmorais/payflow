@@ -26,6 +26,7 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
   const [orderNumber, setOrderNumber] = useState("#000000");
   const [cepStatus, setCepStatus] = useState(false);
   const [config, setConfig] = useState<PublicConfig>({ logo_checkout: "" });
+  const [configLoaded, setConfigLoaded] = useState(false);
 
   const nomeRef = useRef<HTMLInputElement>(null);
   const cpfRef = useRef<HTMLInputElement>(null);
@@ -49,7 +50,8 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
           setConfig({ logo_checkout: json.data.logo_checkout || "" });
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setConfigLoaded(true));
   }, []);
 
   function formatCurrency(value: number): string {
@@ -231,10 +233,12 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
       {screen === "checkout" && (
         <div className="screen">
           <div className="centered-logo">
-            {config.logo_checkout ? (
+            {configLoaded && config.logo_checkout ? (
               <img src={config.logo_checkout} alt="Logo" />
-            ) : (
+            ) : configLoaded ? (
               <div className="default-logo">E</div>
+            ) : (
+              <div style={{ height: "128px" }} />
             )}
           </div>
 
@@ -340,10 +344,12 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
       {screen === "success" && (
         <div className="screen">
           <div className="centered-logo">
-            {config.logo_checkout ? (
+            {configLoaded && config.logo_checkout ? (
               <img src={config.logo_checkout} alt="Logo" />
-            ) : (
+            ) : configLoaded ? (
               <div className="default-logo">E</div>
+            ) : (
+              <div style={{ height: "128px" }} />
             )}
           </div>
 

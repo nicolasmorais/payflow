@@ -9,6 +9,7 @@ interface PublicConfig {
 
 export default function MaintenancePage() {
   const [config, setConfig] = useState<PublicConfig>({ empresa_nome: "", empresa_logo: "" });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/configuracoes/publicas")
@@ -21,7 +22,8 @@ export default function MaintenancePage() {
           });
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -39,13 +41,13 @@ export default function MaintenancePage() {
         width: "100%",
         textAlign: "center",
       }}>
-        {config.empresa_logo ? (
+        {!loading && config.empresa_logo ? (
           <img
             src={config.empresa_logo}
             alt={config.empresa_nome}
             style={{ height: "80px", width: "auto", objectFit: "contain", marginBottom: "32px" }}
           />
-        ) : (
+        ) : !loading ? (
           <div style={{
             width: "80px",
             height: "80px",
@@ -59,6 +61,8 @@ export default function MaintenancePage() {
             justifyContent: "center",
             marginBottom: "32px",
           }}>E</div>
+        ) : (
+          <div style={{ height: "80px", marginBottom: "32px" }} />
         )}
 
         <h1 style={{
@@ -102,7 +106,7 @@ export default function MaintenancePage() {
           fontWeight: 600,
           marginTop: "48px",
         }}>
-          &copy; {new Date().getFullYear()} {config.empresa_nome || "Elabela"}. Todos os direitos reservados.
+          &copy; {new Date().getFullYear()} {!loading ? (config.empresa_nome || "Elabela") : ""} Todos os direitos reservados.
         </p>
       </div>
     </div>

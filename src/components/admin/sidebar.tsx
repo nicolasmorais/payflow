@@ -47,6 +47,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileToggle }: Sid
   const router = useRouter();
   const [logoUrl, setLogoUrl] = useState("");
   const [empresaNome, setEmpresaNome] = useState("");
+  const [configLoaded, setConfigLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/configuracoes/publicas")
@@ -57,7 +58,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileToggle }: Sid
           setEmpresaNome(json.data.empresa_nome || "");
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setConfigLoaded(true));
   }, []);
 
   const handleLogout = async () => {
@@ -98,10 +100,12 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileToggle }: Sid
           <Link href="/dashboard" style={{ display: "inline-block" }} onClick={handleNavClick}>
             {collapsed ? (
               <img src={MOBILE_LOGO} alt="Logo" className="sidebar-logo-icon" />
-            ) : logoUrl ? (
+            ) : configLoaded && logoUrl ? (
               <img src={logoUrl} alt={empresaNome} className="sidebar-logo" />
-            ) : (
+            ) : configLoaded ? (
               <div className="sidebar-logo-default">{DEFAULT_LOGO}</div>
+            ) : (
+              <div style={{ width: "150px", height: "40px" }} />
             )}
           </Link>
         </div>
