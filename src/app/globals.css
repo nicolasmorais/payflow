@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,6 +75,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'Manrope', sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -110,6 +113,7 @@
   z-index: 100;
   border-right: 1px solid rgba(255,255,255,0.04);
   overflow: hidden;
+  font-family: 'Manrope', sans-serif;
 }
 
 .sidebar::before {

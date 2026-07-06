@@ -10,7 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        manrope: ["var(--font-manrope)", "sans-serif"],
+        sans: ["Manrope", "sans-serif"],
+        manrope: ["Manrope", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
