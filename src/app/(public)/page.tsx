@@ -490,13 +490,6 @@ export default function CheckoutPage() {
                   </div>
                 </div>
               </div>
-
-              <div className="help-card">
-                <div className="icon">💬</div>
-                <p>Precisa de ajuda? Chame no WhatsApp (00) 00000-0000</p>
-              </div>
-
-              <button type="button" className="btn-secondary" onClick={voltarInicio}>Fazer outro pedido</button>
             </div>
           )}
         </div>

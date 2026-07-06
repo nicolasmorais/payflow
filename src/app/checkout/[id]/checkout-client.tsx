@@ -366,11 +366,6 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
                 <div className="explain-item"><div className="explain-num">4</div><div className="explain-text"><strong>Pagamento após a entrega</strong><span>Após a confirmação da entrega, entraremos em contato pelo WhatsApp para realizar a cobrança.</span></div></div>
               </div>
             </div>
-            <div className="help-card">
-              <div className="icon">💬</div>
-              <p>Precisa de ajuda? Chame no WhatsApp (00) 00000-0000</p>
-            </div>
-            <button type="button" className="btn-secondary" onClick={voltarInicio}>Fazer outro pedido</button>
           </div>
         </div>
       )}
