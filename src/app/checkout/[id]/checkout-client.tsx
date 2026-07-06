@@ -15,11 +15,16 @@ interface CheckoutClientProps {
   produto: Produto;
 }
 
+interface PublicConfig {
+  logo_checkout: string;
+}
+
 export default function CheckoutClient({ produto }: CheckoutClientProps) {
   const [screen, setScreen] = useState<"checkout" | "success">("checkout");
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState("#000000");
   const [cepStatus, setCepStatus] = useState(false);
+  const [config, setConfig] = useState<PublicConfig>({ logo_checkout: "" });
 
   const nomeRef = useRef<HTMLInputElement>(null);
   const cpfRef = useRef<HTMLInputElement>(null);
@@ -35,6 +40,15 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
   useEffect(() => {
     const utms = getUTMParams();
     (window as any).__utms = utms;
+
+    fetch("/api/configuracoes/publicas")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && json.data) {
+          setConfig({ logo_checkout: json.data.logo_checkout || "" });
+        }
+      })
+      .catch(() => {});
   }, []);
 
   function formatCurrency(value: number): string {
@@ -78,10 +92,12 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
       const r = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const d = await r.json();
       if (d.erro) { showError("cep"); return; }
-      if (ruaRef.current) ruaRef.current.value = d.logradouro || "";
-      if (bairroRef.current) bairroRef.current.value = d.bairro || "";
-      if (cidadeRef.current) cidadeRef.current.value = d.localidade || "";
-      if (estadoRef.current) estadoRef.current.value = d.uf || "";
+      if (ruaRef.current) { ruaRef.current.value = d.logradouro || ""; ruaRef.current.classList.add("filled"); }
+      if (bairroRef.current) { bairroRef.current.value = d.bairro || ""; bairroRef.current.classList.add("filled"); }
+      if (cidadeRef.current) { cidadeRef.current.value = d.localidade || ""; cidadeRef.current.classList.add("filled"); }
+      if (estadoRef.current) { estadoRef.current.value = d.uf || ""; estadoRef.current.classList.add("filled"); }
+      if (numRef.current) { numRef.current.classList.add("attention"); }
+      if (compRef.current) { compRef.current.classList.add("attention"); }
       setCepStatus(true);
       clearError("cep");
       numRef.current?.focus();
@@ -93,6 +109,9 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
     if (cepRef.current) cepRef.current.value = formatted;
     clearError("cep");
     setCepStatus(false);
+    [ruaRef, bairroRef, cidadeRef, estadoRef, numRef, compRef].forEach(ref => {
+      if (ref.current) { ref.current.classList.remove("filled", "attention"); }
+    });
     const raw = formatted.replace(/\D/g, "");
     if (raw.length === 8) buscarEndereco(raw);
   }
@@ -197,37 +216,30 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
     cidadeRef.current && (cidadeRef.current.value = "");
     estadoRef.current && (estadoRef.current.value = "");
     setCepStatus(false);
+    [ruaRef, bairroRef, cidadeRef, estadoRef, numRef, compRef].forEach(ref => {
+      if (ref.current) { ref.current.classList.remove("filled", "attention"); }
+    });
     setScreen("checkout");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
     <div className="checkout-page">
-      <header className="site-header">
-        <div className="site-header-inner">
-          <div className="brand">
-            <div className="brand-logo">E</div>
-            <div>
-              <div className="brand-name">Elabela</div>
-              <div className="brand-tag">Cuidados para sua pele</div>
-            </div>
-          </div>
-          <div className="secure-badge">🔒 Compra segura</div>
-        </div>
-      </header>
 
       {screen === "checkout" && (
         <div className="screen">
-          <div className="step-indicator">
-            <div className="step-item active"><div className="step-circle">1</div><div className="step-text">Seus dados</div></div>
-            <div className="step-connector" />
-            <div className="step-item"><div className="step-circle">2</div><div className="step-text">Confirmação</div></div>
+          <div className="centered-logo">
+            {config.logo_checkout ? (
+              <img src={config.logo_checkout} alt="Logo" />
+            ) : (
+              <div className="default-logo">E</div>
+            )}
           </div>
 
           <div className="card order-card">
             <div className="order-thumb">
               {produto.imagem_url ? (
-                <img src={produto.imagem_url} alt={produto.nome} style={{ width: 50, height: 50, borderRadius: 8, objectFit: "cover" }} />
+                <img src={produto.imagem_url} alt={produto.nome} style={{ width: 50, height: 50, borderRadius: 3, objectFit: "cover" }} />
               ) : "🧴"}
             </div>
             <div className="order-info">
@@ -248,7 +260,7 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
               <div className="field">
                 <label><span className="icon">🙂</span> Nome completo</label>
                 <p className="hint">Digite seu nome, igual está no seu documento.</p>
-                <input ref={nomeRef} type="text" id="nome" placeholder="Exemplo: Maria da Silva" autoComplete="name" onInput={() => clearError("nome")} />
+                <input ref={nomeRef} type="text" id="nome" placeholder="Nome completo" autoComplete="name" onInput={() => clearError("nome")} />
                 <div className="error-msg" id="erro-nome">⚠️ Por favor, digite seu nome completo.</div>
               </div>
               <div className="field">
@@ -279,39 +291,41 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
               </div>
               <div className="field">
                 <label><span className="icon">🛣️</span> Rua / Avenida</label>
-                <input ref={ruaRef} type="text" id="rua" placeholder="Exemplo: Rua das Flores" onInput={() => clearError("rua")} />
+                <input ref={ruaRef} type="text" id="rua" placeholder="Rua / Avenida" onInput={(e) => { clearError("rua"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                 <div className="error-msg" id="erro-rua">⚠️ Digite o nome da rua.</div>
               </div>
               <div className="row-2">
                 <div className="field small">
                   <label><span className="icon">🔢</span> Número</label>
-                  <input ref={numRef} type="text" id="numero" placeholder="Exemplo: 123" inputMode="numeric" onInput={() => clearError("numero")} />
+                  <input ref={numRef} type="text" id="numero" placeholder="Número" inputMode="numeric" onInput={(e) => { clearError("numero"); (e.target as HTMLInputElement).classList.remove("attention"); (e.target as HTMLInputElement).classList.add("filled"); }} />
                   <div className="error-msg" id="erro-numero">⚠️ Digite o número.</div>
                 </div>
                 <div className="field">
                   <label><span className="icon">🏢</span> Complemento</label>
-                  <input ref={compRef} type="text" id="complemento" placeholder="Apto, casa, bloco (opcional)" />
+                  <input ref={compRef} type="text" id="complemento" placeholder="Apto, casa, bloco (opcional)" onInput={(e) => { (e.target as HTMLInputElement).classList.remove("attention"); (e.target as HTMLInputElement).classList.add("filled"); }} />
                 </div>
               </div>
               <div className="field">
                 <label><span className="icon">📍</span> Bairro</label>
-                <input ref={bairroRef} type="text" id="bairro" placeholder="Exemplo: Centro" onInput={() => clearError("bairro")} />
+                <input ref={bairroRef} type="text" id="bairro" placeholder="Bairro" onInput={(e) => { clearError("bairro"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                 <div className="error-msg" id="erro-bairro">⚠️ Digite o bairro.</div>
               </div>
               <div className="row-2">
                 <div className="field">
                   <label><span className="icon">🏙️</span> Cidade</label>
-                  <input ref={cidadeRef} type="text" id="cidade" placeholder="Exemplo: Goiânia" onInput={() => clearError("cidade")} />
+                  <input ref={cidadeRef} type="text" id="cidade" placeholder="Cidade" onInput={(e) => { clearError("cidade"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                   <div className="error-msg" id="erro-cidade">⚠️ Digite a cidade.</div>
                 </div>
                 <div className="field small">
                   <label><span className="icon">🗺️</span> Estado</label>
-                  <input ref={estadoRef} type="text" id="estado" placeholder="Exemplo: GO" maxLength={2}
-                    onInput={(e) => { (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase(); clearError("estado"); }} />
+                  <input ref={estadoRef} type="text" id="estado" placeholder="UF" maxLength={2}
+                    onInput={(e) => { (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase(); clearError("estado"); (e.target as HTMLInputElement).classList.remove("filled"); }} />
                   <div className="error-msg" id="erro-estado">⚠️ Digite o estado (sigla).</div>
                 </div>
               </div>
             </div>
+
+            <p className="pre-submit-note"><span className="whatsapp-icon">💬</span> Depois do pedido, vamos te ligar ou mandar mensagem no <strong>WhatsApp</strong> para confirmar antes de enviar.</p>
 
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading ? "Enviando pedido..." : "Finalizar pedido"}
@@ -323,10 +337,12 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
 
       {screen === "success" && (
         <div className="screen">
-          <div className="step-indicator">
-            <div className="step-item completed"><div className="step-circle">✓</div><div className="step-text">Seus dados</div></div>
-            <div className="step-connector filled" />
-            <div className="step-item completed"><div className="step-circle">✓</div><div className="step-text">Confirmação</div></div>
+          <div className="centered-logo">
+            {config.logo_checkout ? (
+              <img src={config.logo_checkout} alt="Logo" />
+            ) : (
+              <div className="default-logo">E</div>
+            )}
           </div>
 
           <div>
@@ -355,6 +371,10 @@ export default function CheckoutClient({ produto }: CheckoutClientProps) {
           </div>
         </div>
       )}
+
+      <footer className="checkout-footer">
+        <p>&copy; 2025 Elabela. Todos os direitos reservados.</p>
+      </footer>
     </div>
   );
 }

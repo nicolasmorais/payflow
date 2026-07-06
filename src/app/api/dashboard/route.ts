@@ -3,10 +3,21 @@ import { prisma } from "@/lib/db";
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const dateFrom = searchParams.get("from");
+    const dateTo = searchParams.get("to");
+
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
+
+    const yesterdayStart = new Date();
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    yesterdayStart.setHours(0, 0, 0, 0);
+    const yesterdayEnd = new Date();
+    yesterdayEnd.setDate(yesterdayEnd.getDate() - 1);
+    yesterdayEnd.setHours(23, 59, 59, 999);
 
     const tomorrowStart = new Date();
     tomorrowStart.setDate(tomorrowStart.getDate() + 1);
@@ -19,6 +30,7 @@ export async function GET(request: NextRequest) {
     const [
       totalPedidos,
       pedidosHoje,
+      pedidosOntem,
       entregasHoje,
       entregasAmanha,
       pedidosConcluidos,
@@ -31,6 +43,14 @@ export async function GET(request: NextRequest) {
           created_at: {
             gte: todayStart,
             lte: todayEnd,
+          },
+        },
+      }),
+      prisma.pedido.count({
+        where: {
+          created_at: {
+            gte: yesterdayStart,
+            lte: yesterdayEnd,
           },
         },
       }),
@@ -64,15 +84,30 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Pedidos por dia (last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    thirtyDaysAgo.setHours(0, 0, 0, 0);
+    // Pedidos por dia (last 30 days or filtered range)
+    let pedidosPorDiaStart: Date;
+    let pedidosPorDiaEnd: Date;
+    let daysDiff = 30;
 
-    const pedidosLast30Days = await prisma.pedido.findMany({
+    if (dateFrom && dateTo) {
+      pedidosPorDiaStart = new Date(dateFrom + "T00:00:00");
+      pedidosPorDiaEnd = new Date(dateTo + "T23:59:59");
+      daysDiff = Math.ceil(
+        (pedidosPorDiaEnd.getTime() - pedidosPorDiaStart.getTime()) / (1000 * 60 * 60 * 24)
+      );
+    } else {
+      pedidosPorDiaStart = new Date();
+      pedidosPorDiaStart.setDate(pedidosPorDiaStart.getDate() - 30);
+      pedidosPorDiaStart.setHours(0, 0, 0, 0);
+      pedidosPorDiaEnd = new Date();
+      pedidosPorDiaEnd.setHours(23, 59, 59, 999);
+    }
+
+    const pedidosLastDays = await prisma.pedido.findMany({
       where: {
         created_at: {
-          gte: thirtyDaysAgo,
+          gte: pedidosPorDiaStart,
+          lte: pedidosPorDiaEnd,
         },
       },
       select: {
@@ -81,13 +116,13 @@ export async function GET(request: NextRequest) {
     });
 
     const pedidosPorDiaMap: Record<string, number> = {};
-    for (let i = 0; i < 30; i++) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
+    for (let i = 0; i <= daysDiff; i++) {
+      const date = new Date(pedidosPorDiaStart);
+      date.setDate(date.getDate() + i);
       const key = date.toISOString().split("T")[0];
       pedidosPorDiaMap[key] = 0;
     }
-    for (const pedido of pedidosLast30Days) {
+    for (const pedido of pedidosLastDays) {
       const key = pedido.created_at.toISOString().split("T")[0];
       if (pedidosPorDiaMap[key] !== undefined) {
         pedidosPorDiaMap[key]++;
@@ -148,25 +183,48 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => a.month.localeCompare(b.month));
 
     // Format pedidos por status
-    const statusLabels: Record<string, string> = {
-      pendente: "Pendente",
-      confirmado: "Confirmado",
-      em_preparacao: "Em Preparação",
-      saiu_entrega: "Saiu para Entrega",
-      entregue: "Entregue",
-      cancelado: "Cancelado",
-    };
-
     const pedidosPorStatusData = pedidosPorStatus.map((item) => ({
       status: item.status,
       count: item._count.id,
     }));
+
+    // Top produtos
+    const topProdutosRaw = await prisma.pedido.groupBy({
+      by: ["produto"],
+      _count: { id: true },
+      _sum: { valor: true },
+      orderBy: {
+        _count: { id: "desc" },
+      },
+      take: 5,
+    });
+    const topProdutos = topProdutosRaw.map((item) => ({
+      produto: item.produto,
+      count: item._count.id,
+      receita: Number(item._sum.valor || 0),
+    }));
+
+    // Receita total
+    const receitaTotal = await prisma.pedido.aggregate({
+      _sum: { valor: true },
+      where: { status: { not: "cancelado" } },
+    });
+
+    // Receita hoje
+    const receitaHoje = await prisma.pedido.aggregate({
+      _sum: { valor: true },
+      where: {
+        created_at: { gte: todayStart, lte: todayEnd },
+        status: { not: "cancelado" },
+      },
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         totalPedidos,
         pedidosHoje,
+        pedidosOntem,
         entregasHoje,
         entregasAmanha,
         pedidosConcluidos,
@@ -175,6 +233,9 @@ export async function GET(request: NextRequest) {
         pedidosPorCidade,
         evolucaoMensal,
         pedidosPorStatus: pedidosPorStatusData,
+        topProdutos,
+        receitaTotal: Number(receitaTotal._sum.valor || 0),
+        receitaHoje: Number(receitaHoje._sum.valor || 0),
       },
     });
   } catch (error) {
